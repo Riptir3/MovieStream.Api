@@ -14,9 +14,9 @@
         }
 
         public static ApiResponse<T> Ok(T data, string message = "")
-            => new ApiResponse<T>(true, message, data);
+            => new(true, message, data);
 
         public static ApiResponse<T> Fail(string message)
-            => new ApiResponse<T>(false, message);
+            => new(false, message);
     }
 }
