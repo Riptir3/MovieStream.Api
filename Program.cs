@@ -79,6 +79,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithOrigins("http://localhost:5173")); 
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -87,10 +96,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<ValidationErrorMiddleware>();
 
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
