@@ -36,7 +36,7 @@ namespace MovieStream.Api.Controllers
             if (!result.Success)
                 return BadRequest(new { message = result.Message });
 
-            return Ok(new { Token = result.token});
+            return Ok(new { Token = result.token, Username = result.username});
         }
     }
 }

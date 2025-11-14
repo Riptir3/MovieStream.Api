@@ -46,7 +46,6 @@ namespace MovieStream.Api.Services
             {
                 Success = true,
                 Message = "User registered succesfully!",
-                User = newUser
             };
         }
 
@@ -78,7 +77,8 @@ namespace MovieStream.Api.Services
             return new AuthResult
             {
                 Success = true,
-                token = token
+                token = token,
+                username = user.Username
             };
         }
     }

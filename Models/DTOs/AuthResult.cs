@@ -6,8 +6,7 @@ namespace MovieStream.Api.Models.DTOs
     {
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
-        public User? User { get; set; }
-
+        public string? username { get; set; }
         public string? token { get; set; }
     }
 }
