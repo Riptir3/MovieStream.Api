@@ -14,5 +14,9 @@ namespace MovieStream.Api.Models.Entities
         public string Category { get; set; } = string.Empty;
         public string PosterUrl { get; set; } = string.Empty;
         public string VideoUrl { get; set; } = string.Empty;
+
+        public string Director { get; set; } = string.Empty;
+        public int ReleaseYear { get; set; } = 0;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
