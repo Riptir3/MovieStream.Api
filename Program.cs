@@ -43,6 +43,7 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
 
 builder.Services.AddSingleton<MovieService>();
 builder.Services.AddSingleton<FavoriteService>();
+builder.Services.AddSingleton<MovieRequestService>();
 builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();
