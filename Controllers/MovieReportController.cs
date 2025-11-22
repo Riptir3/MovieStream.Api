@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
@@ -27,17 +26,17 @@ namespace MovieStream.Api.Controllers
             await _movieReportService.GetAllAsync();
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(string MovieId, string Comment)
+        public async Task<IActionResult> Create([FromBody] MovieReportDto movieReportDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var movie = await _movieService.GetByIdAsync(MovieId);
+            var movie = await _movieService.GetByIdAsync(movieReportDto.MovieId);
 
             if (movie == null) return BadRequest(new { message = "Movie is not valid!" });
 
             var movieReport = new MovieReport
             {
-                MovieId = MovieId,
-                Comment = Comment,
+                MovieId = movieReportDto.MovieId,
+                Comment = movieReportDto.Comment,
                 UserId = userId
             };
 
