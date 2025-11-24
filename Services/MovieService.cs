@@ -27,8 +27,8 @@ namespace MovieStream.Api.Services
         public async Task CreateAsync(Movie movie) =>
             await _movies.InsertOneAsync(movie);
 
-        public async Task UpdateAsync(string id, Movie updatedMovie) =>
-            await _movies.ReplaceOneAsync(m => m.Id == id, updatedMovie);
+        public async Task UpdateAsync(Movie updatedMovie) =>
+            await _movies.ReplaceOneAsync(m => m.Id == updatedMovie.Id, updatedMovie);
 
         public async Task RemoveAsync(string id) =>
             await _movies.DeleteOneAsync(x => x.Id == id);

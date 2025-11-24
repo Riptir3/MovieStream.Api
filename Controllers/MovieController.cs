@@ -36,14 +36,13 @@ namespace MovieStream.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] Movie updatedMovie)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] Movie updatedMovie)
         {
-            var existingMovie = await _movieService.GetByIdAsync(id);
+            var existingMovie = await _movieService.GetByIdAsync(updatedMovie.Id);
             if (existingMovie == null) return NotFound();
 
-            updatedMovie.Id = id; 
-            await _movieService.UpdateAsync(id, updatedMovie);
+            await _movieService.UpdateAsync(updatedMovie);
             return NoContent();
         }
 
