@@ -16,8 +16,14 @@ namespace MovieStream.Api.Services
         }
         public async Task<List<MovieRequest>> GetAllAsync()
         {
-            return await _movieRequests.Find(_ => true).ToListAsync();
+            return await _movieRequests.Find(r => r.Status == "Active").ToListAsync();
         }
+
+        public async Task<MovieRequest> FindById(string id) =>
+            await _movieRequests.Find(r => r.Id == id).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(MovieRequest requestedMovie) =>
+            await _movieRequests.ReplaceOneAsync(m => m.Id == requestedMovie.Id, requestedMovie);
 
         public async Task CreateAsync(MovieRequest movie) =>
             await _movieRequests.InsertOneAsync(movie);

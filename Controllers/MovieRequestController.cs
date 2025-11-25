@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
@@ -18,6 +17,24 @@ namespace MovieStream.Api.Controllers
         public MovieRequestController(MovieRequestService movieRequestService)
         {
             _movieRequestService = movieRequestService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<MovieRequest>>> GetAll() =>
+            await _movieRequestService.GetAllAsync();
+
+        [HttpPut("{id:length(24)}")]
+        public async Task<ActionResult<List<MovieRequest>>> EditRequest(string id, string status)
+        {
+            var requestedMovie = await _movieRequestService.FindById(id);
+            if (requestedMovie == null)
+            {
+                return NotFound();
+            }
+   
+            requestedMovie.Status = status;
+            await _movieRequestService.UpdateAsync(requestedMovie);
+            return NoContent();
         }
 
         [HttpPost("send")]
@@ -39,4 +56,6 @@ namespace MovieStream.Api.Controllers
             return Ok(new { message = "Movie request sent successfully!" });
         }
     }
+
+
 }
