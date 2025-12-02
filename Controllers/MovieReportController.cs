@@ -44,5 +44,19 @@ namespace MovieStream.Api.Controllers
 
             return Ok(new { message = "Movie report sent successfully!" });
         }
+
+        [HttpPut("{id:length(24)}")]
+        public async Task<ActionResult<List<MovieReport>>> EditReport(string id, string status)
+        {
+            var report = await _movieReportService.FindById(id);
+            if (report == null)
+            {
+                return NotFound();
+            }
+
+            report.Status = status;
+            await _movieReportService.UpdateAsync(report);
+            return NoContent();
+        }
     }
 }

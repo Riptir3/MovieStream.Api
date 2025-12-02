@@ -16,10 +16,15 @@ namespace MovieStream.Api.Services
         }
         public async Task<List<MovieReport>> GetAllAsync()
         {
-            return await _movieReports.Find(_ => true).ToListAsync();
+            return await _movieReports.Find(report => report.Status == "Active").ToListAsync();
         }
+        public async Task<MovieReport> FindById(string id) =>
+            await _movieReports.Find(r => r.Id == id).FirstOrDefaultAsync();
 
         public async Task CreateAsync(MovieReport report) =>
             await _movieReports.InsertOneAsync(report);
+
+        public async Task UpdateAsync(MovieReport report) =>
+            await _movieReports.ReplaceOneAsync(m => m.Id == report.Id, report);
     }
 }
