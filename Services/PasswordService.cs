@@ -5,7 +5,7 @@ namespace MovieStream.Api.Services
 {
     internal sealed class PasswordService
     {
-        public void CreatePasswordHash(string password, out string hash, out string salt)
+        public static void CreatePasswordHash(string password, out string hash, out string salt)
         {
             using (var hmac = new HMACSHA512())
             {
@@ -17,7 +17,7 @@ namespace MovieStream.Api.Services
             }
         }
 
-        public bool VerifyPassword(string password, string hashedPassword, string storedSalt)
+        public static bool VerifyPassword(string password, string hashedPassword, string storedSalt)
         {
             var saltBytes = Convert.FromBase64String(storedSalt);
             using (var hmac = new HMACSHA512(saltBytes))

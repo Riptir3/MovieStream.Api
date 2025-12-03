@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using MovieStream.Api.Models.Entities;
 using MovieStream.Api.Models.DTOs;
-using Microsoft.AspNetCore.Mvc;
+using MovieStream.Api.Models.Entities;
 
 namespace MovieStream.Api.Services
 {
@@ -17,9 +16,8 @@ namespace MovieStream.Api.Services
             _movies = mongoDatabase.GetCollection<Movie>(movieSettings.Value.MoviesCollectionName);
         }
 
-        public async Task<List<Movie>> GetAllAsync() {
-          return await _movies.Find(_ => true).ToListAsync();
-        }
+        public async Task<List<Movie>> GetAllAsync() =>
+            await _movies.Find(_ => true).ToListAsync();
 
         public async Task<Movie?> GetByIdAsync(string id) =>
             await _movies.Find(x => x.Id == id).FirstOrDefaultAsync();

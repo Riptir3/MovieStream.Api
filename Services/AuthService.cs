@@ -9,7 +9,6 @@ namespace MovieStream.Api.Services
     {
         private readonly IMongoCollection<User> _users;
         private readonly JwtService _jwtService;
-        private readonly PasswordService _passwordService = new PasswordService();
 
         public AuthService(IOptions<MongoDbSettings> mongoSettings, IMongoClient mongoClient, JwtService jwtService)
         {
@@ -20,7 +19,7 @@ namespace MovieStream.Api.Services
 
         public async Task<AuthResult?> RegisterAsync(UserRegisterDto userRegisterDto)
         {
-            var user = await _users.Find(u => u.Email == userRegisterDto.Email).FirstOrDefaultAsync();
+            var user = await _users.Find(u => u.Email == userRegisterDto.Email).FirstOrDefaultAsync(); 
             if(user != null)
             {
                 return new AuthResult
@@ -30,7 +29,7 @@ namespace MovieStream.Api.Services
                 };
             }
 
-            _passwordService.CreatePasswordHash(userRegisterDto.Password, out string hash, out string salt);
+            PasswordService.CreatePasswordHash(userRegisterDto.Password, out string hash, out string salt);
 
             var newUser = new User
             {
@@ -57,11 +56,11 @@ namespace MovieStream.Api.Services
                 return new AuthResult
                 {
                     Success = false,
-                    Message = "User not found!"
+                    Message = "Invalid Credentials!"
                 };
             }
 
-            var hash = _passwordService.VerifyPassword(userLoginDto.Password, user.PasswordHash, user.PasswordSalt);
+            var hash = PasswordService.VerifyPassword(userLoginDto.Password, user.PasswordHash, user.PasswordSalt);
 
             if (!hash)
             {

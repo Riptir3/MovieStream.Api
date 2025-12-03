@@ -26,11 +26,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
            };
        });
 
-builder.Services.AddScoped<JwtService>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
 });
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
@@ -41,11 +41,11 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
     return new MongoClient(settings?.ConnectionString);
 });
 
-builder.Services.AddSingleton<MovieService>();
-builder.Services.AddSingleton<FavoriteService>();
-builder.Services.AddSingleton<MovieRequestService>();
-builder.Services.AddSingleton<MovieReportService>();
-
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<MovieService>();
+builder.Services.AddScoped<FavoriteService>();
+builder.Services.AddScoped<MovieRequestService>();
+builder.Services.AddScoped<MovieReportService>();
 builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();
@@ -82,7 +82,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -99,7 +98,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<ValidationErrorMiddleware>();

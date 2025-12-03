@@ -1,20 +1,23 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
 using MovieStream.Api.Services;
 
 namespace MovieStream.Api.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MovieController : ControllerBase
     {
         private readonly MovieService _movieService;
+        private readonly IMapper _mapper;
 
-        public MovieController(MovieService movieService)
+        public MovieController(MovieService movieService, IMapper mapper)
         {
             _movieService = movieService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -30,19 +33,23 @@ namespace MovieStream.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(Movie movie)
+        public async Task<IActionResult> Add([FromBody] MovieDto movieDto)
         {
+            var movie = _mapper.Map<Movie>(movieDto);
             await _movieService.CreateAsync(movie);
+
             return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Movie updatedMovie)
+        [HttpPut("{id:length(24)}")]
+        public async Task<IActionResult> Update(string id, [FromBody] MovieDto movieDto)
         {
-            var existingMovie = await _movieService.GetByIdAsync(updatedMovie.Id);
+            var existingMovie = await _movieService.GetByIdAsync(id);
             if (existingMovie == null) return NotFound();
 
-            await _movieService.UpdateAsync(updatedMovie);
+            _mapper.Map(movieDto, existingMovie);
+
+            await _movieService.UpdateAsync(existingMovie);
             return NoContent();
         }
 
