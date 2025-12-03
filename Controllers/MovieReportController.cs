@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MovieStream.Api.Attributes;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
 using MovieStream.Api.Services;
@@ -21,6 +22,7 @@ namespace MovieStream.Api.Controllers
             _movieService = movieService;
         }
 
+        [AdminOnly]
         [HttpGet]
         public async Task<ActionResult<List<MovieReport>>> GetAll() =>
             await _movieReportService.GetAllAsync();
@@ -45,6 +47,7 @@ namespace MovieStream.Api.Controllers
             return Ok(new { message = "Movie report sent successfully!" });
         }
 
+        [AdminOnly]
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult<List<MovieReport>>> EditReport(string id, string status)
         {

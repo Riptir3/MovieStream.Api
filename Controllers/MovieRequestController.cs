@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MovieStream.Api.Attributes;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
 using MovieStream.Api.Services;
@@ -19,10 +20,12 @@ namespace MovieStream.Api.Controllers
             _movieRequestService = movieRequestService;
         }
 
+        [AdminOnly]
         [HttpGet]
         public async Task<ActionResult<List<MovieRequest>>> GetAll() =>
             await _movieRequestService.GetAllAsync();
 
+        [AdminOnly]
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult<List<MovieRequest>>> EditRequest(string id, string status)
         {

@@ -16,5 +16,8 @@ namespace MovieStream.Api.Models.DTOs
         [Required(ErrorMessage ="Passord is required!")]
         [MinLength(7, ErrorMessage = "Password must be at least 7 characters long.")]
         public string Password { get; set; } = null!;
+
+        [AllowedValues(["User"])]
+        public string Role { get; set;} = "User";
     }
 }

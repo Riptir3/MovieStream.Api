@@ -25,13 +25,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                IssuerSigningKey = new SymmetricSecurityKey(key)
            };
        });
+builder.Services.AddAuthorization(options =>
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("Admin")));
 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
 });
 builder.Services.AddAutoMapper(typeof(Program));
-
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
 

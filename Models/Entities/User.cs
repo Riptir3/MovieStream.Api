@@ -20,5 +20,8 @@ namespace MovieStream.Api.Models.Entities
 
         [BsonElement("passwordSalt")]
         public string PasswordSalt { get; set; } = string.Empty;
+
+        [BsonElement("role")]
+        public string Role { get; set; } = "User";
     }
 }

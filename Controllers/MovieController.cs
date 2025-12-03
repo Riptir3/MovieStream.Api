@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MovieStream.Api.Attributes;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
 using MovieStream.Api.Services;
 
 namespace MovieStream.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MovieController : ControllerBase
@@ -32,6 +34,7 @@ namespace MovieStream.Api.Controllers
             return movie;
         }
 
+        [AdminOnly]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] MovieDto movieDto)
         {
@@ -41,6 +44,7 @@ namespace MovieStream.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
         }
 
+        [AdminOnly]
         [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> Update(string id, [FromBody] MovieDto movieDto)
         {
@@ -53,6 +57,7 @@ namespace MovieStream.Api.Controllers
             return NoContent();
         }
 
+        [AdminOnly]
         [HttpDelete("{id:length(24)}")]
         public async Task<IActionResult> Delete(string id)
         {

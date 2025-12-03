@@ -23,7 +23,7 @@ namespace MovieStream.Api.Controllers
             if (!result.Success)
                 return BadRequest(new { message = result.Message });
 
-            return Ok(result);
+            return Ok();
         }
 
         [HttpPost("login")]
