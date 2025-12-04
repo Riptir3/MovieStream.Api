@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Services;
 
 namespace MovieStream.Api.Controllers
 {
+    [EnableRateLimiting("AuthPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

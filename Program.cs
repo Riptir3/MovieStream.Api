@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Services;
 using System.Text;
+using System.Threading.RateLimiting;
 using TaskManager.Api.Filters;
 using TaskManager.Api.Middlewares;
 
@@ -28,7 +29,55 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy =>
         policy.RequireRole("Admin")));
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        var httpContext = context.HttpContext;
+        httpContext.Response.ContentType = "application/json";
+
+        var json = $$"""
+        {
+            "error": "Rate limit exceeded",
+            "message": "Too many requests, try it later!"
+        }
+        """;
+
+        await httpContext.Response.WriteAsync(json, cancellationToken);
+    };
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var token = context.Request.Headers.Authorization.ToString();
+
+        if (string.IsNullOrEmpty(token))
+            token = context.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
+
+        return RateLimitPartition.GetSlidingWindowLimiter(
+            token,
+            key => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 6,
+                QueueLimit = 0
+            });
+    });
+
+    options.AddPolicy("AuthPolicy", context =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: key => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 6,
+                QueueLimit = 0
+            })
+    );
+});
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
@@ -101,6 +150,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRateLimiter();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<ValidationErrorMiddleware>();
 

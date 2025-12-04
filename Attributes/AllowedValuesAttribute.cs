@@ -4,8 +4,8 @@ namespace MovieStream.Api.Attributes
 {
     public class AllowedMovieCategoryValuesAttribute : ValidationAttribute
     {
-        private readonly HashSet<string> _allowedValues;
 
+        private readonly HashSet<string> _allowedValues;
         public AllowedMovieCategoryValuesAttribute(Type enumType) {
             _allowedValues = Enum.GetNames(enumType).ToHashSet();
         }
