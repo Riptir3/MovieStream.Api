@@ -35,17 +35,9 @@ builder.Services.AddRateLimiter(options =>
 
     options.OnRejected = async (context, cancellationToken) =>
     {
-        var httpContext = context.HttpContext;
-        httpContext.Response.ContentType = "application/json";
-
-        var json = $$"""
-        {
-            "error": "Rate limit exceeded",
-            "message": "Too many requests, try it later!"
-        }
-        """;
-
-        await httpContext.Response.WriteAsync(json, cancellationToken);
+        context.HttpContext.Response.ContentType = "application/json";
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.");
     };
 
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
@@ -139,7 +131,8 @@ builder.Services.AddCors(options =>
         policy => policy
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .WithOrigins("http://localhost:5173")); 
+            .AllowCredentials()
+            .WithOrigins("http://localhost:5173"));
 });
 
 var app = builder.Build();
@@ -150,15 +143,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseRateLimiter();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<ValidationErrorMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
