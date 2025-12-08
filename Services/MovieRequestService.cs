@@ -14,10 +14,8 @@ namespace MovieStream.Api.Services
             var mongoDatabase = mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
             _movieRequests = mongoDatabase.GetCollection<MovieRequest>(mongoSettings.Value.MovieRequestCollectionName);
         }
-        public async Task<List<MovieRequest>> GetAllAsync()
-        {
-            return await _movieRequests.Find(r => r.Status == "Active").ToListAsync();
-        }
+        public async Task<List<MovieRequest>> GetAllAsync() =>
+            await _movieRequests.Find(r => r.Status == "Active").ToListAsync();
 
         public async Task<MovieRequest> FindById(string id) =>
             await _movieRequests.Find(r => r.Id == id).FirstOrDefaultAsync();
