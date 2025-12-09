@@ -3,9 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using MovieStream.Api.Models.DTOs;
+using MovieStream.Api.RateLimiter;
 using MovieStream.Api.Services;
 using System.Text;
-using System.Threading.RateLimiting;
 using TaskManager.Api.Filters;
 using TaskManager.Api.Middlewares;
 
@@ -29,47 +29,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy =>
         policy.RequireRole("Admin")));
-builder.Services.AddRateLimiter(options =>
+
+builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-
-    options.OnRejected = async (context, cancellationToken) =>
-    {
-        context.HttpContext.Response.ContentType = "application/json";
-        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-        await context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.", cancellationToken: cancellationToken);
-    };
-
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-    {
-        var token = context.Request.Headers.Authorization.ToString();
-
-        if (string.IsNullOrEmpty(token))
-            token = context.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
-
-        return RateLimitPartition.GetSlidingWindowLimiter(
-            token,
-            key => new SlidingWindowRateLimiterOptions
-            {
-                PermitLimit = 10,
-                Window = TimeSpan.FromMinutes(1),
-                SegmentsPerWindow = 6,
-                QueueLimit = 0
-            });
-    });
-
-    options.AddPolicy("AuthPolicy", context =>
-        RateLimitPartition.GetSlidingWindowLimiter(
-            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-            factory: key => new SlidingWindowRateLimiterOptions
-            {
-                PermitLimit = 3,
-                Window = TimeSpan.FromMinutes(1),
-                SegmentsPerWindow = 6,
-                QueueLimit = 0
-            })
-    );
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    options.InstanceName = "RateLimit_";
 });
+builder.Services.AddSingleton<RateLimitConfiguration>();
+
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
@@ -143,12 +110,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<CustomRateLimitingMiddleware>();
 app.UseMiddleware<ValidationErrorMiddleware>();
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
-app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
