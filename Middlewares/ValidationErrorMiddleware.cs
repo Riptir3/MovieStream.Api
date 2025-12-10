@@ -23,7 +23,7 @@ namespace TaskManager.Api.Middlewares
                 context.Response.ContentType = "application/json";
 
                 var errors = context.Items["ValidationErrors"];
-                var response = ApiResponse<object>.Fail("Validation failed");
+                var response = Response<object>.Fail("Validation failed");
                 response.Data = errors;
 
                 var json = JsonSerializer.Serialize(response);

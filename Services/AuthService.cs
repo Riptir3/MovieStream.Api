@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
+using TaskManager.Api.Models;
 
 namespace MovieStream.Api.Services
 {
@@ -17,16 +18,12 @@ namespace MovieStream.Api.Services
             _jwtService = jwtService;
         }
 
-        public async Task<AuthResult?> RegisterAsync(UserRegisterDto userRegisterDto)
+        public async Task<Response<object>> RegisterAsync(UserRegisterDto userRegisterDto)
         {
             var user = await _users.Find(u => u.Email == userRegisterDto.Email).FirstOrDefaultAsync(); 
             if(user != null)
             {
-                return new AuthResult
-                {
-                    Success = false,
-                    Message = "A user with this email already exists!"
-                };
+                return Response<object>.Fail("A user with this email already exists!");
             }
 
             PasswordService.CreatePasswordHash(userRegisterDto.Password, out string hash, out string salt);
@@ -41,44 +38,23 @@ namespace MovieStream.Api.Services
 
             await _users.InsertOneAsync(newUser);
 
-            return new AuthResult
-            {
-                Success = true,
-                Message = "User registered succesfully!",
-            };
+            return Response<object>.OK("User registered succesfully!");
         }
 
-        public async Task<AuthResult?> LoginAsync(UserLoginDto userLoginDto)
+        public record LoginResponseDto(string Token, string Username);
+        public async Task<Response<LoginResponseDto>> LoginAsync(UserLoginDto userLoginDto)
         {
             var user = await _users.Find(u => u.Email == userLoginDto.Email).FirstOrDefaultAsync();
             if (user == null)
-            {
-                return new AuthResult
-                {
-                    Success = false,
-                    Message = "Invalid Credentials!"
-                };
-            }
+                return Response<LoginResponseDto>.Fail("Invalid Credentials!");
 
             var hash = PasswordService.VerifyPassword(userLoginDto.Password, user.PasswordHash, user.PasswordSalt);
-
             if (!hash)
-            {
-                return new AuthResult
-                {
-                    Success = false,
-                    Message = "Invalid Credentials!"
-                };
-            }
+                return Response<LoginResponseDto>.Fail("Invalid Credentials!");
 
             var token = _jwtService.GenerateToken(user);
-
-            return new AuthResult
-            {
-                Success = true,
-                token = token,
-                username = user.Username
-            };
+            var data = new LoginResponseDto(token, user.Username);
+            return Response<LoginResponseDto>.OK("Login successfully!", data);
         }
     }
 }

@@ -8,7 +8,7 @@ using MovieStream.Api.Services;
 
 namespace MovieStream.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MovieController : ControllerBase

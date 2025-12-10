@@ -34,7 +34,7 @@ namespace TaskManager.Api.Middlewares
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var response = ApiResponse<string>.Fail($"An unexpected error occurred: {ex.Message}");
+            var response = Response<string>.Fail($"An unexpected error occurred: {ex.Message}");
             var json = JsonSerializer.Serialize(response);
 
             await context.Response.WriteAsync(json);
