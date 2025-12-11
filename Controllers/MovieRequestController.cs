@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieStream.Api.Attributes;
 using MovieStream.Api.Models.DTOs;
@@ -14,10 +15,12 @@ namespace MovieStream.Api.Controllers
     public class MovieRequestController : ControllerBase
     {
         private readonly MovieRequestService _movieRequestService;
+        private readonly IMapper _mapper;
 
-        public MovieRequestController(MovieRequestService movieRequestService)
+        public MovieRequestController(MovieRequestService movieRequestService, IMapper mapper)
         {
             _movieRequestService = movieRequestService;
+            _mapper = mapper;
         }
 
         [AdminOnly]
@@ -41,24 +44,16 @@ namespace MovieStream.Api.Controllers
         }
 
         [HttpPost("send")]
-        public async Task<IActionResult> SendRequest(MovieRequestDto movieRequestDto)
+        public async Task<IActionResult> SendRequest([FromBody] MovieRequestDto movieRequestDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            var movieRequest = new MovieRequest
-            {
-                Title = movieRequestDto.Title,
-                Director = movieRequestDto.Director,
-                ReleaseYear = movieRequestDto.ReleaseYear,
-                Comment = movieRequestDto.Comment,
-                UserId = userId
-            };
+            var movieRequest = _mapper.Map<MovieRequest>(movieRequestDto);
+            movieRequest.UserId = userId;
 
             await _movieRequestService.CreateAsync(movieRequest);
 
             return Ok(new { message = "Movie request sent successfully!" });
         }
     }
-
-
 }

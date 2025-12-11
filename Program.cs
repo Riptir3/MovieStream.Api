@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using MovieStream.Api.Extensions;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.RateLimiter;
 using MovieStream.Api.Services;
@@ -44,7 +44,6 @@ builder.Services.AddControllers(options =>
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
-
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
     var settings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
@@ -60,38 +59,7 @@ builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Task Manager API",
-        Version = "v1"
-    });
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-});
+builder.Services.AddSwaggerWithAuthorization();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",

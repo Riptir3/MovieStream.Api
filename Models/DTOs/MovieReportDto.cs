@@ -2,13 +2,13 @@
 
 namespace MovieStream.Api.Models.DTOs
 {
-    public class MovieReportDto
+    public record MovieReportDto
     {
         [Required]
-        public string MovieId { get; set; }
+        public string MovieId { get; set; } = null!;
         
         [Required(ErrorMessage = "Comment is required!")]
         [MaxLength(100,ErrorMessage = "Max length of comment is 100 characters!")]
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
     }
 }

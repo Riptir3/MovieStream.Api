@@ -15,10 +15,8 @@ namespace MovieStream.Api.Services
             _favorites = mongoDatabase.GetCollection<Favorite>(mongoSettings.Value.FavoriteCollectionName);
         }
 
-        public async Task<List<Favorite>> GetUserFavorites(string userId)
-        {
-            return await _favorites.Find(f => f.UserId == userId).ToListAsync();
-        }
+        public async Task<List<Favorite>> GetUserFavorites(string userId) =>
+            await _favorites.Find(f => f.UserId == userId).ToListAsync();
 
         public async Task<bool> Exists(string userId, string movieId)
         {

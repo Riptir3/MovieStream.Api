@@ -2,7 +2,7 @@
 
 namespace MovieStream.Api.Models.DTOs
 {
-    public class UserLoginDto
+    public record UserLoginDto
     {
         [Required(ErrorMessage = "Email is required!")]
         [EmailAddress(ErrorMessage = "Not valid email address!")]

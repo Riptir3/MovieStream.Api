@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MovieStream.Api.Models.DTOs
 {
-    public class UserRegisterDto
+    public record UserRegisterDto
     {
         [Required(ErrorMessage = "Username is required!")]
         [MinLength(5,ErrorMessage ="Username must be at least 5 characters long!")]

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MovieStream.Api.Models.DTOs
 {
-    public class MovieDto
+    public record MovieDto
     {
         [Required(ErrorMessage = "Title is required!")]
         [MinLength(2, ErrorMessage = "Title must be at least 2 characters long!")]

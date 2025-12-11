@@ -9,6 +9,7 @@ namespace MovieStream.Api.Mappers
         public MovieProfile()
         {
             CreateMap<MovieDto, Movie>();
+            CreateMap<MovieRequestDto, MovieRequest>();
         }
     }
 }
