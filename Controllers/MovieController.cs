@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieStream.Api.Attributes;
+using MovieStream.Api.Exceptions;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
 using MovieStream.Api.Services;
@@ -30,7 +31,7 @@ namespace MovieStream.Api.Controllers
         public async Task<ActionResult<Movie>> GetById(string id)
         {
             var movie = await _movieService.GetByIdAsync(id);
-            if (movie == null) return NotFound();
+            if (movie == null) throw new NotFoundException("Movie", id);
             return movie;
         }
 
@@ -49,7 +50,7 @@ namespace MovieStream.Api.Controllers
         public async Task<IActionResult> Update(string id, [FromBody] MovieDto movieDto)
         {
             var existingMovie = await _movieService.GetByIdAsync(id);
-            if (existingMovie == null) return NotFound();
+            if (existingMovie == null) throw new NotFoundException("Movie", id);
 
             _mapper.Map(movieDto, existingMovie);
 
@@ -62,7 +63,7 @@ namespace MovieStream.Api.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var movie = await _movieService.GetByIdAsync(id);
-            if (movie == null) return NotFound();
+            if (movie == null) throw new NotFoundException("Movie", id);
 
             await _movieService.RemoveAsync(id);
             return NoContent();

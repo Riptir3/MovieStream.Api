@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieStream.Api.Attributes;
+using MovieStream.Api.Exceptions;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
 using MovieStream.Api.Services;
@@ -33,7 +34,7 @@ namespace MovieStream.Api.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var movie = await _movieService.GetByIdAsync(movieReportDto.MovieId);
 
-            if (movie == null) return BadRequest(new { message = "Movie is not valid!" });
+            if (movie == null) throw new NotFoundException("Movie Report", movieReportDto.MovieId);
 
             var movieReport = new MovieReport
             {
@@ -54,7 +55,7 @@ namespace MovieStream.Api.Controllers
             var report = await _movieReportService.FindById(id);
             if (report == null)
             {
-                return NotFound();
+                throw new NotFoundException("Movie Report", id);
             }
 
             report.Status = status;

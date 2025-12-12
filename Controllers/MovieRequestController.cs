@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieStream.Api.Attributes;
+using MovieStream.Api.Exceptions;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Models.Entities;
 using MovieStream.Api.Services;
@@ -35,7 +36,7 @@ namespace MovieStream.Api.Controllers
             var requestedMovie = await _movieRequestService.FindById(id);
             if (requestedMovie == null)
             {
-                return NotFound();
+                throw new NotFoundException("Movie Requet", id);
             }
    
             requestedMovie.Status = status;

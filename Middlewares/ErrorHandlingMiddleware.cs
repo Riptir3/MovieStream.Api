@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using MovieStream.Api.Exceptions;
 using System.Net;
 using System.Text.Json;
 using TaskManager.Api.Models;
@@ -20,9 +21,15 @@ namespace TaskManager.Api.Middlewares
             {
                 await _next(context);
             }
+            catch(NotFoundException ex)
+            {
+                await HandleNotFoundException(context, ex);
+                return;
+            }
             catch (Exception ex)
             {
                 await HandleInternalServerError(context, ex);
+                return;
             }
 
             switch (context.Response.StatusCode)
@@ -35,9 +42,24 @@ namespace TaskManager.Api.Middlewares
                     await HandleUnauthorized(context);
                     break;
                 case StatusCodes.Status404NotFound:
-                    await HandleNotFound(context);
+                    await HandleRouteNotFound(context);
                     break;
             }
+        }
+
+        private static async Task HandleNotFoundException(HttpContext context, NotFoundException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            context.Response.ContentType = "application/json";
+
+            var responseMessage = new
+            {
+                Status = StatusCodes.Status404NotFound,
+                Message = ex.Message, 
+                Type = "ResourceNotFound"
+            };
+
+            await context.Response.WriteAsJsonAsync(responseMessage);
         }
 
         private static async Task HandleInternalServerError(HttpContext context, Exception ex)
@@ -78,8 +100,13 @@ namespace TaskManager.Api.Middlewares
             await context.Response.WriteAsJsonAsync(responseMessage);
         }
 
-        private static async Task HandleNotFound(HttpContext context)
+        private static async Task HandleRouteNotFound(HttpContext context)
         {
+            if (context.Response.HasStarted)
+            {
+                return;
+            }
+
             context.Response.ContentType = "application/json";
 
             var responseMessage = new
