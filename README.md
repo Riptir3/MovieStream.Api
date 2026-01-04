@@ -36,36 +36,36 @@ Egy **ASP.NET Core 8 Web API** alapú alkalmazás backend kiszolgálója. Egy ro
 ## 🗂️ Projekt szerkezete
 
 ```
-TaskManagerAPI/
-│
-├── Controllers/
-│ ├── UsersController.cs -> Felhasználói végpontok ( regisztráció, bejelentkezés ).
-│ └── TasksController.cs -> Felhasználói feladatok végpontjai ( CRUD, keresés/szűrés).
-│
-├── Data/
-│ ├── AppDbContext.cs -> Adatbázis konfiguráció.
-│
-├── Filters/
-│ ├── ValidationFilter.cs -> Validációs hibák kezelése.
-│
-├── Middlewares/
-│ ├── ErrorHandlingMiddleware.cs -> Hiba kezelés.
-│ └── ValidationErrorMiddleware.cs -> Validációs hibák eljutatása a frontendre.
-│
-├── Migrations/ -> Adatbázis migrációk.
-|
-├── Models/
-│ ├── DTOs/ -> Data Transfer Objects.
-│ ├── Entities/ -> Adatbázis modellek.
-│ ├── ApiResponse.cs -> Egyedi response object.
-│
-├── Services/
-│ ├── JwtService.cs -> JWT token generálás
-│ └── PasswordService.cs -> Jelszó titkosítás és ellenőrzés.
-│
-├──appsettings.json -> Konfigurációs fájl.
-|
-└── Program.cs
+> ### 🏷️ Attributes
+> Itt találhatók az egyedi dekorátorok, amelyek az adatvalidációért és a végpontok hozzáférési logikájáért (pl. jogosultságkezelés) felelnek.
+
+> ### 🎮 Controllers
+> Az API belépési pontjai. Feladatuk kizárólag a beérkező HTTP kérések fogadása, a paraméterek átadása a szervizeknek, majd a válaszok visszaküldése.
+
+> ### ⚠️ Exceptions
+> Egyedi hibaosztályok gyűjteménye, amelyek lehetővé teszik a pontosabb hibakezelést és az alkalmazásspecifikus hibaüzenetek továbbítását a felhasználó felé.
+
+> ### 🧩 Extensions
+> C# extension metódusok, amelyek segítik a kód olvashatóságát. Itt történik többek között a szolgáltatások (Dependency Injection) tiszta regisztrációja is.
+
+> ### 🧪 Filters
+> Olyan szűrők, amelyek a kérések életciklusába avatkoznak be (pl. logolás, extra validáció), mielőtt azok elérnék a kontrollert.
+
+> ### 🗺️ Mappers
+> Az adatok transzformációjáért felelős réteg. Itt dől el, hogyan alakulnak át az adatbázis entitások (Models) biztonságos kimeneti objektumokká (DTO).
+
+> ### ⚙️ Middlewares
+> A kérések feldolgozási láncában (Pipeline) elhelyezkedő komponensek, mint például a globális hibakezelő vagy a hitelesítési folyamatok.
+
+> ### 📦 Models
+> A projekt adatstruktúráit tartalmazza: az adatbázis táblákat leképező entitásokat és a kommunikációhoz használt adatátviteli objektumokat.
+
+> ### 🚦 RateLimiter
+> Az API terhelésvédelméért felelős konfigurációk, amelyek megakadályozzák a végpontok túlterhelését.
+
+> ### 🧠 Services
+> Az alkalmazás "agya". Itt található az összes üzleti logika és a komplex számítások, elszeparálva a webes felülettől.
+---
 ```
 ## 🧪 API végpontok
 
