@@ -120,7 +120,7 @@ A két alkalmazás Axios-on keresztül kommunikál, a `https://localhost:7084/ap
 ### 🛠️ Előfeltételek
 - .NET 8.0 SDK (vagy frissebb)
 - MongoDB Atlas felhasználó
-- Redis szerver
+- Redis szerver (Docker ajánlott)
 - Környzeti változók megadása az ```appsettings.json```-ben
 <img width="388" height="355" alt="Appsettings" src="https://github.com/user-attachments/assets/89df043b-267f-4f24-81aa-9bdf253ed472" />
 
