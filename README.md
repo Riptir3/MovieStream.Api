@@ -75,14 +75,28 @@ Egy **ASP.NET Core 8 Web API** alapú alkalmazás backend kiszolgálója. Egy ro
 | `POST`       | `/api/Users/register` | Új felhasználó regisztrálása     |
 | `POST`       | `/api/Users/login`        | Bejelentkezés és token generálás |
 
-🔹 Feladatok (autentikáció szükséges)
+🔹 Filmek (autentikáció szükséges)
 | HTTP metódus | Útvonal           | Leírás                         |
 | ------------ | ----------------- | ------------------------------ |
-| `GET`        | `/api/Tasks`      | Összes feladat lekérdezése     |
-| `GET`        | `/api/Tasks/{id}` | Feladat lekérdezése ID alapján |
-| `POST`       | `/api/Tasks`      | Új feladat létrehozása         |
-| `PUT`        | `/api/Tasks/{id}` | Feladat módosítása             |
-| `DELETE`     | `/api/Tasks/{id}` | Feladat törlése                |
+| `GET`        | `/api/Movie`      | Összes film lekérése     |
+| `GET`        | `/api/Movie/{id}` | Film lekérése ID alapján |
+| `POST`       | `/api/Movie`      | Új film létrehozása         |
+| `PUT`        | `/api/Movie/{id}` | Film módosítása             |
+| `DELETE`     | `/api/Movie/{id}` | Film törlése                |
+
+🔹 Kedvenc filmek (autentikáció szükséges)
+| HTTP metódus | Útvonal           | Leírás                         |
+| ------------ | ----------------- | ------------------------------ |
+| `GET`        | `/api/Favorite`| Felhasználó összes kedvenc filmje    |
+| `POST`        | `/api/Favorite/add/{id}` | Felhasználó kedvenc filmjeihez való hozzáadás |
+| `DELETE`       | `/api/Favorite/remove/{id}` | Felhasználó kedvenc filmjeiből való törlés |
+
+🔹 Filmek jelentése (autentikáció szükséges)
+| HTTP metódus | Útvonal           | Leírás                         |
+| ------------ | ----------------- | ------------------------------ |
+| `GET`        | `/api/MovieReport`      | Összes film jelentés lekérése     |
+| `PUT`        | `/api/MovieReport/{id}` | Jelentés módosítása ID alapján |
+| `POST`       | `/api/MovieReport`      | Új jelentés létrehozása         |
 
 ## 🔑 JWT hitelesítés
 
