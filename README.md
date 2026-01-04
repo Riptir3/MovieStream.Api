@@ -35,7 +35,6 @@ Egy **ASP.NET Core 8 Web API** alapú alkalmazás backend kiszolgálója. Egy ro
 
 ## 🗂️ Projekt szerkezete
 
-```
 > ### 🏷️ Attributes
 > Itt találhatók az egyedi dekorátorok, amelyek az adatvalidációért és a végpontok hozzáférési logikájáért (pl. jogosultságkezelés) felelnek.
 
@@ -65,8 +64,13 @@ Egy **ASP.NET Core 8 Web API** alapú alkalmazás backend kiszolgálója. Egy ro
 
 > ### 🧠 Services
 > Az alkalmazás "agya". Itt található az összes üzleti logika és a komplex számítások, elszeparálva a webes felülettől.
+
+> ### Program.cs
+> Az alkalmazás belépési pontja.
+> ### appsettings.json
+> Környezetfüggő beállításokat (pl. Connection String).
 ---
-```
+
 ## 🧪 API végpontok
 
 🔹 Felhasználók
@@ -98,52 +102,49 @@ Egy **ASP.NET Core 8 Web API** alapú alkalmazás backend kiszolgálója. Egy ro
 | `PUT`        | `/api/MovieReport/{id}` | Jelentés módosítása ID alapján |
 | `POST`       | `/api/MovieReport`      | Új jelentés létrehozása         |
 
-## 🔑 JWT hitelesítés
+🔹 Film kérése (autentikáció szükséges)
+| HTTP metódus | Útvonal           | Leírás                         |
+| ------------ | ----------------- | ------------------------------ |
+| `GET`        | `/api/MovieRequest`      | Összes film kérés lekérése     |
+| `PUT`        | `/api/MovieRequest/{id}` | Film kérés módosítása ID alapján |
+| `POST`       | `/api/MovieRequest/send`      | Új film kérés létrehozása |
 
-A bejelentkezés után a szerver visszaad egy JWT tokent, amelyet a kliens minden kérésnél a headerben küld el:
-``` makefile
-Authorization: Bearer <token>
-```
-### Példa:
-``` http
-GET /api/Tasks HTTP/1.1
-Host: localhost:7242
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-A token lejárata után egyelőre a kliens újra bejelentkezésre kényszerül.
-
+---
 ## 🌍 Frontend integráció
 
 A backendhez készül egy React+Tailwind alapú frontend is:
-👉[Task Manager Frontend](https://github.com/Riptir3/task-manager-frontend). 
-A két alkalmazás Axios-on keresztül kommunikál, a `https://localhost:7242/api/...` végpontokat használva.
+👉[Movie Stream Client](https://github.com/Riptir3/MovieStreamClient). 
+A két alkalmazás Axios-on keresztül kommunikál, a `https://localhost:7084/api/...` végpontokat használva.
 
 ## ⚙️ Telepítés és futtatás
+### 🛠️ Előfeltételek
+- .NET 8.0 SDK (vagy frissebb)
+- MongoDB Atlas felhasználó
+- Redis szerver
+- Környzeti változók megadása az ```appsettings.json```-ben
+<img width="388" height="355" alt="Appsettings" src="https://github.com/user-attachments/assets/89df043b-267f-4f24-81aa-9bdf253ed472" />
+
 
 ### 1️⃣ Klónozd a repót
 ```bash
-git clone https://github.com/Riptir3/TaskManager.Api.git
-cd TaskManager.API
+git clone https://github.com/Riptir3/MovieStream.Api.git
+cd MovieStream.Api
 ```
 ### 2️⃣ Telepítsd a függőségeket
 ```bash
-dotnet build
+dotnet restore
 ```
-### 3️⃣ Adatbázis létrehozása
-```bash
-dotnet ef database update
-```
-### 4️⃣ Futtatás
+### 3️⃣ Futtatás
 ```bash
 dotnet run
 ```
 ### A backend elérhető lesz itt:
 ```arduino
-https://localhost:7242
+https://localhost:7084
 ```
 ### Swagger UI:
 ```bash
-https://localhost:7242/swagger
+https://localhost:7084/swagger
 ```
 
 ## Kapcsolat
