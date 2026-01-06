@@ -41,7 +41,7 @@ namespace MovieStream.Api.Services
             return Response<object>.OK("User registered succesfully!");
         }
 
-        public record LoginResponseDto(string Token, string Username);
+        public record LoginResponseDto(string Token);
         public async Task<Response<LoginResponseDto>> LoginAsync(UserLoginDto userLoginDto)
         {
             var user = await _users.Find(u => u.Email == userLoginDto.Email).FirstOrDefaultAsync();
@@ -53,7 +53,7 @@ namespace MovieStream.Api.Services
                 return Response<LoginResponseDto>.Fail("Invalid Credentials!");
 
             var token = _jwtService.GenerateToken(user);
-            var data = new LoginResponseDto(token, user.Username);
+            var data = new LoginResponseDto(token);
             return Response<LoginResponseDto>.OK("Login successfully!", data);
         }
     }

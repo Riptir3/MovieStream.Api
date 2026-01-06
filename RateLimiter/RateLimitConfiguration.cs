@@ -12,7 +12,7 @@
             var wildcardRules = new List<(string Pattern, int Limit, int Window)>
         {
             ("/api/user/*", 3, 30),
-            ("/*", 5, 30)
+            ("/*", 100, 30)
         };
             _wildcardLimits = wildcardRules
                 .OrderByDescending(r => r.Pattern.Length)
