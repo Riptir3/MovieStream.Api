@@ -62,14 +62,21 @@ namespace MovieStream.Api.RateLimiter
 
             if (requestCount > limit)
             {
+                if (context.Request.Method == "OPTIONS")
+                {
+                    await _next(context);
+                    return;
+                }
+
                 context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
+                context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+                context.Response.Headers["Access-Control-Expose-Headers"] = "Retry-After";
 
                 var timeRemainingInWindow = window - (DateTimeOffset.UtcNow.ToUnixTimeSeconds() % window);
-
-                context.Response.Headers.Add("Retry-After", timeRemainingInWindow.ToString());
+                context.Response.Headers["Retry-After"] = timeRemainingInWindow.ToString();
 
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync($"Too many requests ({limit}/{window} seconds). Try it {timeRemainingInWindow} seconds later.");
+                await context.Response.WriteAsync($"Too many requests! Try it {timeRemainingInWindow} seconds later.");
                 return;
             }
 

@@ -112,7 +112,7 @@ namespace TaskManager.Api.Middlewares
             var responseMessage = new
             {
                 Status = StatusCodes.Status404NotFound,
-                Message = $"Requested path is not found: {context.Request.Path}"
+                Message = $"Requested path is not found!"
             };
 
             await context.Response.WriteAsJsonAsync(responseMessage);
