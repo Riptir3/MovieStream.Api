@@ -4,6 +4,10 @@
     {
         SciFi,
         Action,
-        Drama
+        Drama,
+        Horror,
+        Comedy,
+        Thriller,
+        Documentary
     }
 }
