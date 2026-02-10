@@ -56,6 +56,7 @@ builder.Services.AddScoped<FavoriteService>();
 builder.Services.AddScoped<MovieRequestService>();
 builder.Services.AddScoped<MovieReportService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ChatService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
