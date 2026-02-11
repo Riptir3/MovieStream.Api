@@ -59,6 +59,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ChatService>();
 
 builder.Services.AddControllers();
+builder.Services.AddMemoryCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuthorization();
 builder.Services.AddCors(options =>

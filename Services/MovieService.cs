@@ -19,6 +19,12 @@ namespace MovieStream.Api.Services
         public async Task<List<Movie>> GetAllAsync() =>
             await _movies.Find(_ => true).ToListAsync();
 
+        public async Task<List<string>> GetAllAiAsync()
+        {
+            var movies = await _movies.Find(_ => true).ToListAsync();
+            return movies.Select(m => $"{m.Title} ({m.Category}, {m.Director})").ToList();
+        }
+
         public async Task<Movie?> GetByIdAsync(string id) =>
             await _movies.Find(x => x.Id == id).FirstOrDefaultAsync();
 

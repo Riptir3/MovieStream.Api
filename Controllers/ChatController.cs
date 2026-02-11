@@ -1,28 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using MovieStream.Api.Models.DTOs;
 using MovieStream.Api.Services;
 
 namespace MovieStream.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class ChatController : ControllerBase
     {
         private readonly ChatService _chatService;
         public ChatController(ChatService chatService)
-        { 
+        {
             _chatService = chatService;
         }
 
-        [HttpPost("ask")]
-        public async Task<IActionResult> AskAi([FromBody] ChatRequest request)
+        [HttpPost("ask-stream")]
+        [Authorize] 
+        public async Task GetAiStream([FromBody] ChatRequest request)
         {
-            var res = await _chatService.AskAi(request);
+            Response.ContentType = "text/event-stream";
 
-            if (!res.Success) return BadRequest(res.Message);
+            await foreach (var chunk in _chatService.AskAiStream(request))
+            {
+                await Response.WriteAsync($"data: {chunk.Replace("\n", "\\n")}\n\n");
+                await Response.Body.FlushAsync();
 
-            return Ok(res.Message);
+                await Task.Delay(30);
+            }
         }
     }
 }
+
