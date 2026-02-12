@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using MovieStream.Api.Models.DTOs;
+using MovieStream.Api.Models.Entities;
 
 namespace MovieStream.Api.Services
 {
@@ -22,8 +23,9 @@ namespace MovieStream.Api.Services
             var moviesContext = await _cache.GetOrCreateAsync("movies_for_ai", async entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-                var movies = await _movieService.GetAllAiAsync();
-                return string.Join(", ", movies);
+                var movies = await _movieService.GetAllAsync();
+                var edittedMOvies = movies.Select(m => $"{m.Title} ({m.Id}, {m.Category}, {m.Director})").ToList();
+                return string.Join(", ", edittedMOvies);
             });
 
             string systemPrompt = $@"
@@ -31,7 +33,9 @@ namespace MovieStream.Api.Services
                 KIZÁRÓLAG a következő listában szereplő filmekből ajánlhatsz: [{moviesContext}].
                 Ha a felhasználó olyat kér, ami nincs a listában, udvariasan mondd meg, hogy az jelenleg nem elérhető nálunk, 
                 és ajánlj helyette valamit a listából. 
-                A válaszaid legyenek barátságosak és a kérdésnek megfelelő nyelvűek.";
+                FONTOS: Ha filmet említesz, MINDIG alakítsd linkké a címét így: [Film Címe](http://localhost:5173/movies/ID) 
+                Az ID helyére a film adatbázis azonosítóját írd.
+                A válaszodban használj Markdown formázást (listák, félkövér szöveg).";
 
             using var client = new HttpClient();
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url)
